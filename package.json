@@ -1,13 +1,29 @@
 {
-  "name": "reel-big-catch-turn-based",
+  "name": "reel-big-catch",
   "version": "1.0.0",
-  "description": "Reel Big Catch - 2-Player Turn-Based Fishing Competition (5 Fish Catch)",
+  "description": "Reel Big Catch - Competitive 2-Player Turn-Based Fishing Game (5 Fish Duel)",
   "main": "index.html",
   "scripts": {
-    "start": "npx serve -s . -l 3000",
-    "dev": "npx serve -s . -l 3000"
+    "start": "npx --yes serve -s . -l 3000",
+    "dev": "npx --yes serve -s . -l 3000"
   },
-  "keywords": ["fishing", "game", "2-player", "turn-based", "canvas", "vercel"],
-  "author": "Antigravity Pair Programmer",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/edwin-esquivel-ADSO/Reel-Big-Catch.git"
+  },
+  "devDependencies": {
+    "serve": "^14.2.4"
+  },
+  "keywords": [
+    "fishing-game",
+    "html5-game",
+    "canvas-game",
+    "2-player",
+    "turn-based",
+    "telescopic-fish",
+    "vercel",
+    "english-learning"
+  ],
+  "author": "Edwin Alejandro Esquivel Bahamon (https://github.com/edwin-esquivel-ADSO)",
   "license": "MIT"
 }

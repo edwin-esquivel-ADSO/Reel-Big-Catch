@@ -1,118 +1,85 @@
 // ============================================================
 // REEL BIG CATCH: 2-PLAYER TURN-BASED COMPETITIVE SHOWDOWN
-// 5 Fish Catch Competition with Telescopic Accordion Fish
+// 5-Fish Catch Competition with Telescopic Accordion Fish
+// Specifications & Performance:
+// - 100% Pure English Interface (No external translations needed)
+// - Lightweight 60FPS Canvas Loop (Optimized math, low draw overhead)
+// - Native Web Audio API Procedural Synthesizer (0 KB external audio)
+// - Memory-safe Particle Management and RAF Cleanups
 // ============================================================
 
-// --- Translations Dictionary (Bilingual: English & Spanish) ---
+// Canvas roundRect compatibility shim for older browsers/webviews
+if (!CanvasRenderingContext2D.prototype.roundRect) {
+    CanvasRenderingContext2D.prototype.roundRect = function (x, y, w, h, r) {
+        if (typeof r === 'undefined') r = 0;
+        if (typeof r === 'number') r = [r, r, r, r];
+        const rad = r[0] || 0;
+        this.beginPath();
+        this.moveTo(x + rad, y);
+        this.arcTo(x + w, y, x + w, y + h, rad);
+        this.arcTo(x + w, y + h, x, y + h, rad);
+        this.arcTo(x, y + h, x, y, rad);
+        this.arcTo(x, y, x + w, y, rad);
+        this.closePath();
+        return this;
+    };
+}
+
+// --- English Text Dictionary ---
 const I18N = {
-    en: {
-        title: "REEL BIG CATCH",
-        subtitle: "2-Player Turn-Based Showdown (5 Fish Limit)",
-        tagTurnDuel: "Turn-Based Duel",
-        waiting: "Waiting...",
-        yourTurn: "YOUR TURN TO FISH!",
-        p1DefaultName: "Player 1",
-        p2DefaultName: "Player 2",
-        fishLabel: "Fishes",
-        scoreLabel: "Total Score",
-        biggestLabel: "Biggest Catch",
-        roundLabel: "Round",
-        ofLabel: "of",
-        turnBanner: "{name}'s Turn — Catch Fish #{num}!",
-        castPrompt: "Move rod and press SPACE or click CAST!",
-        btnCast: "CAST HOOK",
-        btnReel: "REEL IN",
-        btnPlayAgain: "Play Again",
-        btnSettings: "Settings",
-        btnStartGame: "Start Fishing Match",
-        settingsTitle: "Match Configuration",
-        p1NameLabel: "Player 1 Name",
-        p2NameLabel: "Player 2 Name",
-        targetFishLabel: "Fish Target per Player",
-        winCondLabel: "Winning Rule",
-        winCondBiggest: "Biggest Single Fish Wins (Recommended)",
-        winCondTotal: "Highest Total Score (cm) Wins",
-        diffLabel: "Fish Swimming Speed",
-        diffCalm: "Calm Water",
-        diffNormal: "Normal",
-        diffFast: "Fast Current",
-        matchOver: "Match Completed!",
-        winnerDeclared: "🏆 {name} Wins the Trophy!",
-        tieDeclared: "🤝 Epic Tie! Both Caught {size} cm!",
-        winReasonBiggest: "Caught the Biggest Fish: {size} cm!",
-        winReasonTotal: "Scored the Highest Total: {score} cm!",
-        p1CatchHistory: "Player 1's Catches",
-        p2CatchHistory: "Player 2's Catches",
-        measuringTitle: "MEASURING CATCH...",
-        toastNewRecord: "🌟 New Personal Record: {size} cm!",
-        toastTurnSwitch: "🎣 Next Up: {name}'s Turn!",
-        fishRarities: {
-            1: "Small Fry",
-            2: "Standard Snapper",
-            3: "Big Catch!",
-            4: "Monster Whopper!",
-            5: "Giant Marlin!",
-            6: "LEGENDARY LEVIATHAN!"
-        },
-        controlsGuide: "Controls: [A / D] or [Arrows] Move Rod | [SPACE / ENTER / Click] Cast & Reel"
+    title: "REEL BIG CATCH",
+    subtitle: "2-Player Turn-Based Showdown (5 Fish Limit)",
+    tagTurnDuel: "Turn-Based Duel (5 Fish)",
+    waiting: "Waiting...",
+    yourTurn: "YOUR TURN TO FISH!",
+    p1DefaultName: "Player 1",
+    p2DefaultName: "Player 2",
+    fishLabel: "Catches (5)",
+    scoreLabel: "Total Score",
+    biggestLabel: "Biggest Catch",
+    roundLabel: "Round",
+    ofLabel: "of",
+    turnBanner: "{name}'s Turn — Catch Fish #{num}!",
+    castPrompt: "Move rod and press SPACE or click CAST!",
+    btnCast: "CAST HOOK",
+    btnReel: "REEL IN",
+    btnPlayAgain: "Play Again",
+    btnSettings: "Settings",
+    btnStartGame: "Start Fishing Match",
+    settingsTitle: "Match Configuration",
+    p1NameLabel: "Player 1 Name",
+    p2NameLabel: "Player 2 Name",
+    targetFishLabel: "Fish Target per Player",
+    winCondLabel: "Winning Rule",
+    winCondBiggest: "Biggest Single Fish Wins",
+    winCondTotal: "Highest Total Score Wins",
+    diffLabel: "Fish Swimming Speed",
+    diffCalm: "Calm Water",
+    diffNormal: "Normal",
+    diffFast: "Fast Current",
+    matchOver: "Match Completed!",
+    winnerDeclared: "🏆 {name} Wins the Trophy!",
+    tieDeclared: "🤝 Epic Tie! Both Caught {size} cm!",
+    winReasonBiggest: "Caught the Biggest Fish: {size} cm!",
+    winReasonTotal: "Scored the Highest Total: {score} cm!",
+    p1CatchHistory: "Player 1's Catches",
+    p2CatchHistory: "Player 2's Catches",
+    measuringTitle: "MEASURING CATCH...",
+    toastNewRecord: "🌟 New Personal Record: {size} cm!",
+    toastTurnSwitch: "🎣 Next Up: {name}'s Turn!",
+    fishRarities: {
+        1: "Small Fry (15 cm)",
+        2: "Standard Snapper (30 cm)",
+        3: "Big Catch! (45 cm)",
+        4: "Monster Whopper! (60 cm)",
+        5: "Giant Marlin! (75 cm)",
+        6: "LEGENDARY LEVIATHAN! (90 cm)"
     },
-    es: {
-        title: "REEL BIG CATCH",
-        subtitle: "Duelo por Turnos para 2 Jugadores (Límite 5 Peces)",
-        tagTurnDuel: "Duelo por Turnos",
-        waiting: "Esperando...",
-        yourTurn: "¡TU TURNO DE PESCAR!",
-        p1DefaultName: "Jugador 1",
-        p2DefaultName: "Jugador 2",
-        fishLabel: "Peces",
-        scoreLabel: "Puntos Totales",
-        biggestLabel: "Pez Mayor",
-        roundLabel: "Ronda",
-        ofLabel: "de",
-        turnBanner: "¡Turno de {name} — Pez #{num}!",
-        castPrompt: "¡Mueve la caña y presiona ESPACIO o HAZ CLIC!",
-        btnCast: "LANZAR ANZUELO",
-        btnReel: "RECOGER",
-        btnPlayAgain: "Revancha",
-        btnSettings: "Ajustes",
-        btnStartGame: "Iniciar Duelo de Pesca",
-        settingsTitle: "Configuración de la Partida",
-        p1NameLabel: "Nombre Jugador 1",
-        p2NameLabel: "Nombre Jugador 2",
-        targetFishLabel: "Peces por Jugador",
-        winCondLabel: "Condición de Victoria",
-        winCondBiggest: "Gana el Pez Más Grande (Recomendado)",
-        winCondTotal: "Gana Mayor Puntuación Total (cm)",
-        diffLabel: "Velocidad de Peces",
-        diffCalm: "Aguas Calmas",
-        diffNormal: "Normal",
-        diffFast: "Corriente Rápida",
-        matchOver: "¡Partida Finalizada!",
-        winnerDeclared: "🏆 ¡{name} se lleva el Trofeo!",
-        tieDeclared: "🤝 ¡Empate Épico! ¡Ambos con {size} cm!",
-        winReasonBiggest: "¡Sacó el pez más grande: {size} cm!",
-        winReasonTotal: "¡Logró la mayor puntuación: {score} cm!",
-        p1CatchHistory: "Peces de Jugador 1",
-        p2CatchHistory: "Peces de Jugador 2",
-        measuringTitle: "MIDIENDO CAPTURA...",
-        toastNewRecord: "🌟 ¡Nuevo Récord Personal: {size} cm!",
-        toastTurnSwitch: "🎣 Siguiente Turno: ¡{name}!",
-        fishRarities: {
-            1: "Pez Pequeño",
-            2: "Pargo Estándar",
-            3: "¡Gran Captura!",
-            4: "¡Monstruo Enorme!",
-            5: "¡Marlín Gigante!",
-            6: "¡LEVIATÁN LEGENDARIO!"
-        },
-        controlsGuide: "Controles: [A / D] o [Flechas] Mover Caña | [ESPACIO / ENTER / Clic] Lanzar y Recoger"
-    }
+    controlsGuide: "Controls: [A / D] or [Arrows] Move Rod | [SPACE / ENTER / Click] Cast & Reel"
 };
 
-let currentLang = 'en'; // Default in English as requested for English class / "peces inglés"
-
 function t(key, replacements = {}) {
-    let str = I18N[currentLang][key] || key;
+    let str = I18N[key] || key;
     for (const [k, v] of Object.entries(replacements)) {
         str = str.replace(new RegExp(`\\{${k}\\}`, 'g'), v);
     }
@@ -122,7 +89,7 @@ function t(key, replacements = {}) {
 // --- Game Global State ---
 const state = {
     active: false,
-    maxFishPerPlayer: 5, // Exactly 5 fish limit per player!
+    maxFishPerPlayer: 5,     // Exactly 5 fish limit per player (5 rounds)
     winCondition: 'biggest', // 'biggest' (biggest single fish) or 'total' (sum of cm)
     difficulty: 'normal',   // 'calm', 'normal', 'fast'
     activePlayer: 1,        // 1 or 2
@@ -132,7 +99,7 @@ const state = {
             name: "Player 1",
             color: "#38bdf8",
             colorDark: "#0284c7",
-            catches: [], // array of { segments, lengthCm, color, name }
+            catches: [],    // array of { segments, lengthCm, color, name }
             score: 0,
             maxFish: 0
         },
@@ -184,12 +151,12 @@ class Fish {
 
         // Fish visual styles & colors based on segment size
         const palette = [
-            { body: '#22d3ee', belly: '#a5f3fc', fin: '#06b6d4' }, // Cyan Guppy
-            { body: '#4ade80', belly: '#bbf7d0', fin: '#16a34a' }, // Emerald Snapper
-            { body: '#f43f5e', belly: '#fecdd3', fin: '#e11d48' }, // Ruby Bass
-            { body: '#c084fc', belly: '#f3e8ff', fin: '#9333ea' }, // Purple Tuna
-            { body: '#fb923c', belly: '#fed7aa', fin: '#ea580c' }, // Orange Marlin
-            { body: '#facc15', belly: '#fef08a', fin: '#ca8a04' }  // Golden Legend
+            { body: '#22d3ee', belly: '#a5f3fc', fin: '#06b6d4' }, // Cyan Guppy (15cm)
+            { body: '#4ade80', belly: '#bbf7d0', fin: '#16a34a' }, // Emerald Snapper (30cm)
+            { body: '#f43f5e', belly: '#fecdd3', fin: '#e11d48' }, // Ruby Bass (45cm)
+            { body: '#c084fc', belly: '#f3e8ff', fin: '#9333ea' }, // Purple Tuna (60cm)
+            { body: '#fb923c', belly: '#fed7aa', fin: '#ea580c' }, // Orange Marlin (75cm)
+            { body: '#facc15', belly: '#fef08a', fin: '#ca8a04' }  // Golden Legend (90cm)
         ];
         this.style = palette[(segmentsCount - 1) % palette.length];
     }
@@ -216,6 +183,7 @@ class Fish {
         if (this.isBeingMeasured) {
             // ==========================================
             // TELESCOPIC EXPANDING MEASUREMENT ANIMATION
+            // Lightweight: Uses basic paths with zero DOM reflow
             // ==========================================
             ctx.translate(this.x, this.y);
 
@@ -323,7 +291,7 @@ class Fish {
                 ctx.fillText(`🎉 ${this.lengthCm} cm!`, 0, -44);
 
                 // Rarity title
-                const rarityTitle = I18N[currentLang].fishRarities[this.segmentsCount] || "Great Catch!";
+                const rarityTitle = I18N.fishRarities[this.segmentsCount] || "Great Catch!";
                 ctx.font = 'bold 13px Quicksand, sans-serif';
                 ctx.fillStyle = '#fef08a';
                 ctx.fillText(rarityTitle, 0, -22);
@@ -431,17 +399,17 @@ class Fish {
 // Active Fishes on Screen
 let fishes = [];
 
-// Bubble particles system in water
+// Bubble particles system in water (Lightweight budget: 16 bubbles)
 let bubbles = [];
 
 function initBubbles() {
     bubbles = [];
-    for (let i = 0; i < 25; i++) {
+    for (let i = 0; i < 16; i++) {
         bubbles.push({
             x: Math.random() * canvas.width,
             y: 110 + Math.random() * (canvas.height - 110),
-            radius: 1.5 + Math.random() * 3.5,
-            speed: 0.4 + Math.random() * 0.8,
+            radius: 1.5 + Math.random() * 3.0,
+            speed: 0.4 + Math.random() * 0.7,
             wobble: Math.random() * Math.PI * 2
         });
     }
@@ -461,8 +429,8 @@ function updateBubbles() {
 
 function drawBubbles(ctx) {
     ctx.save();
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.25)';
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.45)';
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.22)';
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.40)';
     ctx.lineWidth = 1;
     bubbles.forEach(b => {
         ctx.beginPath();
@@ -488,7 +456,6 @@ function spawnFishes() {
             const y = waterTop + i * rowHeight + Math.random() * 12;
 
             // Randomized segments: 1 (15cm) up to 6 (90cm)
-            // Weighted distribution so big ones are exciting!
             const rand = Math.random();
             let segments = 2;
             if (rand < 0.25) segments = 1;      // 15 cm
@@ -712,7 +679,7 @@ function updateMeasurementAnimation() {
                     segments: fish.segmentsCount,
                     lengthCm: fish.lengthCm,
                     style: fish.style,
-                    rarity: I18N[currentLang].fishRarities[fish.segmentsCount] || "Fish"
+                    rarity: I18N.fishRarities[fish.segmentsCount] || "Fish"
                 });
 
                 // Play celebrations
@@ -788,7 +755,7 @@ function checkTurnProgression() {
 function finishMatch() {
     state.active = false;
     window.soundEngine.playVictory();
-    window.confettiCannon.fire(5000);
+    window.confettiCannon.fire(4500);
 
     const p1 = state.players[1];
     const p2 = state.players[2];
@@ -952,11 +919,12 @@ function drawGame() {
     waterGrad.addColorStop(1, 'rgba(3, 105, 161, 0.90)');
     ctx.fillStyle = waterGrad;
 
-    // Animated Water Surface Wave
+    // Animated Water Surface Wave (Lightweight 60fps calculation)
+    const waveTime = performance.now() * 0.0025;
     ctx.beginPath();
     ctx.moveTo(0, surfaceY);
-    for (let x = 0; x <= canvas.width; x += 25) {
-        ctx.lineTo(x, surfaceY + Math.sin(x * 0.035 + Date.now() * 0.0028) * 4);
+    for (let x = 0; x <= canvas.width; x += 30) {
+        ctx.lineTo(x, surfaceY + Math.sin(x * 0.035 + waveTime) * 3.5);
     }
     ctx.lineTo(canvas.width, canvas.height);
     ctx.lineTo(0, canvas.height);
@@ -1164,6 +1132,7 @@ function startMatch() {
     // Hide overlays
     document.getElementById('overlay-menu').classList.add('hidden');
     document.getElementById('overlay-results').classList.add('hidden');
+    document.getElementById('overlay-guide').classList.add('hidden');
 
     updateHUD();
     spawnFishes();
@@ -1175,11 +1144,11 @@ function startMatch() {
 
 // --- Setup Form UI Event Handlers ---
 function initEventListeners() {
-    // Start button
+    // Start match buttons
     document.getElementById('btn-start-game').addEventListener('click', startMatch);
     document.getElementById('btn-replay').addEventListener('click', startMatch);
 
-    // Settings button
+    // Settings buttons
     document.getElementById('btn-reconfig').addEventListener('click', () => {
         window.soundEngine.playClick();
         document.getElementById('overlay-results').classList.add('hidden');
@@ -1188,8 +1157,36 @@ function initEventListeners() {
 
     document.getElementById('btn-open-settings').addEventListener('click', () => {
         window.soundEngine.playClick();
+        document.getElementById('overlay-guide').classList.add('hidden');
         document.getElementById('overlay-menu').classList.remove('hidden');
     });
+
+    // How to Play Rules Guide buttons
+    const btnOpenGuide = document.getElementById('btn-open-guide');
+    const btnCloseGuide = document.getElementById('btn-close-guide');
+    const btnGuideGotIt = document.getElementById('btn-guide-got-it');
+    const overlayGuide = document.getElementById('overlay-guide');
+
+    if (btnOpenGuide && overlayGuide) {
+        btnOpenGuide.addEventListener('click', () => {
+            window.soundEngine.playClick();
+            overlayGuide.classList.remove('hidden');
+        });
+    }
+
+    if (btnCloseGuide && overlayGuide) {
+        btnCloseGuide.addEventListener('click', () => {
+            window.soundEngine.playClick();
+            overlayGuide.classList.add('hidden');
+        });
+    }
+
+    if (btnGuideGotIt && overlayGuide) {
+        btnGuideGotIt.addEventListener('click', () => {
+            window.soundEngine.playClick();
+            overlayGuide.classList.add('hidden');
+        });
+    }
 
     // Sound toggle
     const btnSound = document.getElementById('btn-sound-toggle');
@@ -1201,23 +1198,14 @@ function initEventListeners() {
             : '<i class="fa-solid fa-volume-xmark text-lg text-slate-500"></i>';
     });
 
-    // Language Toggle (EN / ES)
-    const btnLang = document.getElementById('btn-lang-toggle');
-    btnLang.addEventListener('click', () => {
-        window.soundEngine.playClick();
-        currentLang = currentLang === 'en' ? 'es' : 'en';
-        btnLang.textContent = currentLang === 'en' ? '🇺🇸 EN' : '🇪🇸 ES';
-        applyTranslations();
-    });
-
     // Fish Target presets (3, 5, 7)
     document.querySelectorAll('.target-btn').forEach(btn => {
         btn.addEventListener('click', () => {
             window.soundEngine.playClick();
             document.querySelectorAll('.target-btn').forEach(b => {
-                b.className = 'target-btn flex-1 py-2 rounded-xl border-2 border-slate-700 bg-slate-800 text-xs font-bold text-slate-300 hover:border-cyan-400 transition-all';
+                b.className = 'target-btn flex-1 py-1.5 rounded-xl border-2 border-slate-700 bg-slate-800 text-xs font-bold text-slate-300 hover:border-cyan-400 transition-all';
             });
-            btn.className = 'target-btn flex-1 py-2 rounded-xl border-2 border-cyan-400 bg-cyan-500/20 text-xs font-bold text-cyan-200 transition-all';
+            btn.className = 'target-btn flex-1 py-1.5 rounded-xl border-2 border-cyan-400 bg-cyan-500/20 text-xs font-bold text-cyan-200 transition-all';
             state.maxFishPerPlayer = parseInt(btn.dataset.target);
         });
     });
@@ -1227,9 +1215,9 @@ function initEventListeners() {
         btn.addEventListener('click', () => {
             window.soundEngine.playClick();
             document.querySelectorAll('.win-rule-btn').forEach(b => {
-                b.className = 'win-rule-btn p-3 rounded-xl border-2 border-slate-700 bg-slate-800/80 text-slate-400 transition-all flex flex-col items-center text-center';
+                b.className = 'win-rule-btn p-2.5 rounded-xl border-2 border-slate-700 bg-slate-800/80 text-slate-400 transition-all flex flex-col items-center text-center';
             });
-            btn.className = 'win-rule-btn p-3 rounded-xl border-2 border-cyan-400 bg-cyan-500/20 text-cyan-200 transition-all flex flex-col items-center text-center';
+            btn.className = 'win-rule-btn p-2.5 rounded-xl border-2 border-cyan-400 bg-cyan-500/20 text-cyan-200 transition-all flex flex-col items-center text-center';
             state.winCondition = btn.dataset.rule;
         });
     });

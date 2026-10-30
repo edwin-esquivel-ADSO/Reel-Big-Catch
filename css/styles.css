@@ -1,0 +1,145 @@
+/* ============================================================
+   LIGHTWEIGHT 60FPS STYLES & HARDWARE-ACCELERATED ANIMATIONS
+   Specification:
+   - Uses transform and opacity only (avoids browser layout reflows)
+   - Balanced glassmorphism (optimized backdrop-blur for low GPU overhead)
+   - will-change hints applied strictly to animated cards
+   - Lightweight keyframes (smooth, low computational complexity)
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Quicksand:wght@500;600;700;800&display=swap');
+
+* {
+    font-family: 'Quicksand', sans-serif;
+    user-select: none;
+    -webkit-user-select: none;
+    box-sizing: border-box;
+}
+
+.font-game {
+    font-family: 'Fredoka One', cursive;
+}
+
+canvas {
+    touch-action: none;
+}
+
+/* Optimized Glassmorphism Panels (Lightweight blur to prevent GPU thermal throttling) */
+.glass-panel {
+    background: rgba(15, 23, 42, 0.88);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 2px solid rgba(255, 255, 255, 0.12);
+}
+
+.glass-card {
+    background: rgba(30, 41, 59, 0.80);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+}
+
+/* Player Theme Styling */
+.card-p1 {
+    background: linear-gradient(135deg, rgba(14, 165, 233, 0.22) 0%, rgba(3, 105, 161, 0.40) 100%);
+    border: 2px solid rgba(56, 189, 248, 0.45);
+    transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+    will-change: transform;
+}
+
+.card-p2 {
+    background: linear-gradient(135deg, rgba(249, 115, 22, 0.22) 0%, rgba(194, 65, 12, 0.40) 100%);
+    border: 2px solid rgba(251, 146, 60, 0.45);
+    transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+    will-change: transform;
+}
+
+/* Lightweight Active Turn Pulse (GPU-accelerated transform + border glow) */
+.active-turn-p1 {
+    border-color: #38bdf8 !important;
+    box-shadow: 0 0 18px rgba(56, 189, 248, 0.65) !important;
+    transform: scale(1.018);
+}
+
+.active-turn-p2 {
+    border-color: #fb923c !important;
+    box-shadow: 0 0 18px rgba(251, 146, 60, 0.65) !important;
+    transform: scale(1.018);
+}
+
+/* Fish Slots - Lightweight Pop-in animation */
+.fish-slot {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: 800;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.fish-slot-empty {
+    border: 2px dashed rgba(255, 255, 255, 0.22);
+    background: rgba(0, 0, 0, 0.25);
+    color: rgba(255, 255, 255, 0.4);
+}
+
+.fish-slot-filled {
+    border: 2px solid #ffffff;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.35);
+    animation: popIn 0.32s cubic-bezier(0.175, 0.885, 0.32, 1.25);
+}
+
+@keyframes popIn {
+    0% { transform: scale(0.6); opacity: 0; }
+    80% { transform: scale(1.1); }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+/* Lightweight Interactive Button Hover */
+.btn-bounce {
+    transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+.btn-bounce:hover {
+    transform: translateY(-2px);
+}
+
+.btn-bounce:active {
+    transform: translateY(1px) scale(0.98);
+}
+
+/* Keyboard control badge styling */
+.key-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2px 7px;
+    font-family: 'Fredoka One', cursive;
+    font-size: 11px;
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    border-bottom-width: 3px;
+    border-radius: 6px;
+    color: #ffffff;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+/* Scrollbars */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+::-webkit-scrollbar-track {
+    background: rgba(15, 23, 42, 0.6);
+}
+::-webkit-scrollbar-thumb {
+    background: rgba(56, 189, 248, 0.4);
+    border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(56, 189, 248, 0.7);
+}

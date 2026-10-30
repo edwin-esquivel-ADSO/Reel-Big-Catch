@@ -1,4 +1,12 @@
-// Procedural Canvas Confetti Particle System
+// ============================================================
+// LIGHTWEIGHT CANVAS CONFETTI PARTICLE SYSTEM
+// Specification:
+// - Lightweight memory and CPU footprint (65 particles max)
+// - Hardware-accelerated 2D canvas transforms
+// - Automatic requestAnimationFrame cleanup and termination
+// - No external libraries or asset loading overhead
+// ============================================================
+
 class ConfettiCannon {
     constructor() {
         this.canvas = null;
@@ -34,31 +42,30 @@ class ConfettiCannon {
     fire(duration = 4000) {
         this.init();
         const colors = ['#f43f5e', '#38bdf8', '#facc15', '#4ade80', '#c084fc', '#fb923c'];
-        const count = 120;
+        
+        // Lightweight particle budget: 65 particles for high performance
+        const count = 65;
 
         for (let i = 0; i < count; i++) {
             this.particles.push({
                 x: window.innerWidth * (0.2 + Math.random() * 0.6),
                 y: window.innerHeight * 0.4,
-                vx: (Math.random() - 0.5) * 16,
-                vy: -(Math.random() * 14 + 6),
-                size: Math.random() * 10 + 6,
+                vx: (Math.random() - 0.5) * 14,
+                vy: -(Math.random() * 12 + 5),
+                size: Math.random() * 8 + 5,
                 color: colors[Math.floor(Math.random() * colors.length)],
                 rotation: Math.random() * 360,
-                rotSpeed: (Math.random() - 0.5) * 12,
-                gravity: 0.35,
-                drag: 0.98,
-                alpha: 1
+                rotSpeed: (Math.random() - 0.5) * 10,
+                gravity: 0.32,
+                drag: 0.985,
+                alpha: 1,
+                lifespan: 140 + Math.random() * 60 // Max frame lifespan
             });
         }
 
         if (!this.animId) {
             this.loop();
         }
-
-        setTimeout(() => {
-            // Let existing particles fade out
-        }, duration);
     }
 
     loop() {
@@ -73,9 +80,10 @@ class ConfettiCannon {
             p.x += p.vx;
             p.y += p.vy;
             p.rotation += p.rotSpeed;
+            p.lifespan -= 1;
 
-            if (p.y > this.canvas.height - 20) {
-                p.alpha -= 0.02;
+            if (p.lifespan < 40 || p.y > this.canvas.height - 30) {
+                p.alpha -= 0.025;
             }
 
             this.ctx.save();
@@ -83,14 +91,16 @@ class ConfettiCannon {
             this.ctx.translate(p.x, p.y);
             this.ctx.rotate((p.rotation * Math.PI) / 180);
             this.ctx.fillStyle = p.color;
-            this.ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.6);
+            this.ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.65);
             this.ctx.restore();
 
-            if (p.alpha <= 0 || p.y > this.canvas.height + 100) {
+            // Automatic cleanup when particle leaves screen or fades completely
+            if (p.alpha <= 0 || p.y > this.canvas.height + 60 || p.lifespan <= 0) {
                 this.particles.splice(i, 1);
             }
         }
 
+        // Halt animation loop immediately when all particles have finished
         if (this.particles.length > 0) {
             this.animId = requestAnimationFrame(() => this.loop());
         } else {

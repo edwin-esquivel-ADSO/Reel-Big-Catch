@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Reel Big Catch - 2 Player Turn-Based Fishing Game</title>
+    <title>Reel Big Catch - 2-Player Turn-Based Fishing Duel</title>
     
-    <!-- Meta tags for SEO & Vercel deployment -->
-    <meta name="description" content="Reel Big Catch: Competitive 2-Player Turn-Based Fishing Game. Catch up to 5 fish each and measure their telescopic bodies!">
+    <!-- Meta tags for SEO & deployment -->
+    <meta name="description" content="Reel Big Catch: Competitive 2-Player Turn-Based Fishing Game in English. Catch 5 fish each and measure their telescopic bodies!">
     <meta name="theme-color" content="#0284c7">
 
     <!-- Tailwind CSS CDN -->
@@ -15,8 +15,8 @@
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="styles.css">
+    <!-- Custom Styles & Lightweight Animations -->
+    <link rel="stylesheet" href="css/styles.css">
 </head>
 <body class="bg-slate-950 text-white min-h-screen flex flex-col justify-between overflow-x-hidden selection:bg-cyan-500 selection:text-slate-900">
 
@@ -27,7 +27,7 @@
             <!-- Logo & Mode Badge -->
             <div class="flex items-center gap-2">
                 <div class="bg-gradient-to-r from-cyan-500 via-teal-500 to-emerald-500 p-2 sm:p-2.5 rounded-2xl shadow-lg border-2 border-white/30 flex items-center gap-2 sm:gap-2.5">
-                    <i class="fa-solid fa-fish-fins text-2xl sm:text-3xl text-yellow-300 animate-bounce"></i>
+                    <i class="fa-solid fa-fish-fins text-2xl sm:text-3xl text-yellow-300"></i>
                     <div>
                         <h1 class="font-game text-base sm:text-xl tracking-wider text-white leading-none drop-shadow" data-i18n="title">
                             REEL BIG CATCH
@@ -39,30 +39,36 @@
                 </div>
             </div>
 
-            <!-- Controls: Language, Sound, Settings -->
-            <div class="flex items-center gap-2 sm:gap-3">
+            <!-- Controls: English Badge, Rules Guide, Sound, Settings -->
+            <div class="flex items-center gap-2 sm:gap-2.5">
                 
-                <!-- Language Toggle Button -->
-                <button id="btn-lang-toggle" class="glass-panel px-3 py-1.5 sm:py-2 rounded-2xl hover:bg-white/20 btn-bounce text-xs sm:text-sm font-bold border border-white/20 shadow-md text-white flex items-center gap-1">
-                    🇺🇸 EN
+                <!-- 100% English Indicator Badge -->
+                <div class="glass-panel px-2.5 sm:px-3 py-1.5 rounded-2xl text-[11px] sm:text-xs font-bold border border-cyan-400/30 text-cyan-200 shadow-md flex items-center gap-1.5" title="Language: 100% English">
+                    <span>🇺🇸</span> <span class="hidden xs:inline">English</span>
+                </div>
+
+                <!-- How to Play Guide Button -->
+                <button id="btn-open-guide" class="glass-panel px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-2xl hover:bg-white/20 btn-bounce text-xs sm:text-sm font-bold border border-cyan-400/40 text-cyan-200 shadow-md flex items-center gap-1.5" title="How to Play & Rules">
+                    <i class="fa-solid fa-circle-question text-cyan-400"></i>
+                    <span class="hidden sm:inline">Rules</span>
                 </button>
 
                 <!-- Sound Toggle Button -->
-                <button id="btn-sound-toggle" class="glass-panel p-2 sm:p-2.5 rounded-2xl hover:bg-white/20 btn-bounce text-yellow-300 border border-white/20 shadow-md">
+                <button id="btn-sound-toggle" class="glass-panel p-2 sm:p-2.5 rounded-2xl hover:bg-white/20 btn-bounce text-yellow-300 border border-white/20 shadow-md" title="Toggle Sound">
                     <i class="fa-solid fa-volume-high text-base sm:text-lg"></i>
                 </button>
 
                 <!-- Settings Button -->
-                <button id="btn-open-settings" class="glass-panel p-2 sm:p-2.5 rounded-2xl hover:bg-white/20 btn-bounce text-cyan-300 border border-white/20 shadow-md" title="Settings">
+                <button id="btn-open-settings" class="glass-panel p-2 sm:p-2.5 rounded-2xl hover:bg-white/20 btn-bounce text-cyan-300 border border-white/20 shadow-md" title="Match Settings">
                     <i class="fa-solid fa-gear text-base sm:text-lg"></i>
                 </button>
             </div>
         </div>
 
         <!-- ACTIVE TURN PROMINENT BANNER -->
-        <div id="hud-turn-banner" class="w-full glass-panel py-2 px-4 rounded-2xl border border-cyan-400/40 flex items-center justify-between shadow-lg bg-gradient-to-r from-slate-900/90 via-slate-850/90 to-slate-900/90">
+        <div id="hud-turn-banner" class="w-full glass-panel py-2 px-4 rounded-2xl border border-cyan-400/40 flex items-center justify-between shadow-lg bg-gradient-to-r from-slate-900/95 via-slate-850/95 to-slate-900/95">
             <div class="flex items-center gap-2">
-                <span class="w-3 h-3 rounded-full bg-emerald-400 animate-ping"></span>
+                <span class="w-3 h-3 rounded-full bg-emerald-400 animate-pulse"></span>
                 <span id="hud-turn-title" class="font-game text-sm sm:text-base text-yellow-300 tracking-wide drop-shadow">
                     Player 1's Turn — Catch Fish #1!
                 </span>
@@ -82,7 +88,7 @@
         <div id="hud-scores-bar" class="w-full grid grid-cols-2 gap-2 sm:gap-4 z-10">
             
             <!-- Player 1 HUD Card -->
-            <div id="p1-hud-card" class="card-p1 p-2.5 sm:p-3.5 rounded-2xl flex flex-col justify-between gap-2 transition-all duration-300 active-turn-p1">
+            <div id="p1-hud-card" class="card-p1 p-2.5 sm:p-3.5 rounded-2xl flex flex-col justify-between gap-2 active-turn-p1">
                 <div class="flex items-center justify-between">
                     <div class="flex items-center gap-2">
                         <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-cyan-500 text-slate-950 font-game text-base sm:text-lg flex items-center justify-center border-2 border-white shadow">
@@ -98,7 +104,7 @@
                                 </span>
                             </div>
                             <p class="text-[10px] sm:text-xs text-cyan-200 font-bold">
-                                <span data-i18n="biggestLabel">Biggest</span>: <span id="p1-biggest-display" class="text-yellow-300 font-game">0 cm</span>
+                                <span data-i18n="biggestLabel">Biggest Catch</span>: <span id="p1-biggest-display" class="text-yellow-300 font-game">0 cm</span>
                             </p>
                         </div>
                     </div>
@@ -118,7 +124,7 @@
             </div>
 
             <!-- Player 2 HUD Card -->
-            <div id="p2-hud-card" class="card-p2 p-2.5 sm:p-3.5 rounded-2xl flex flex-col justify-between gap-2 transition-all duration-300">
+            <div id="p2-hud-card" class="card-p2 p-2.5 sm:p-3.5 rounded-2xl flex flex-col justify-between gap-2">
                 <div class="flex items-center justify-between">
                     <div class="flex items-center gap-2">
                         <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-orange-500 text-slate-950 font-game text-base sm:text-lg flex items-center justify-center border-2 border-white shadow">
@@ -134,7 +140,7 @@
                                 </span>
                             </div>
                             <p class="text-[10px] sm:text-xs text-orange-200 font-bold">
-                                <span data-i18n="biggestLabel">Biggest</span>: <span id="p2-biggest-display" class="text-yellow-300 font-game">0 cm</span>
+                                <span data-i18n="biggestLabel">Biggest Catch</span>: <span id="p2-biggest-display" class="text-yellow-300 font-game">0 cm</span>
                             </p>
                         </div>
                     </div>
@@ -166,8 +172,66 @@
                 </div>
             </div>
 
+            <!-- HOW TO PLAY / RULES MODAL OVERLAY -->
+            <div id="overlay-guide" class="absolute inset-0 bg-slate-950/90 backdrop-blur-sm flex items-center justify-center p-3 sm:p-6 z-50 overflow-y-auto hidden">
+                <div class="max-w-lg w-full bg-slate-900 rounded-3xl p-5 sm:p-6 border-2 border-cyan-500/50 shadow-2xl space-y-4 my-auto">
+                    <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                        <div class="flex items-center gap-2">
+                            <div class="w-9 h-9 rounded-xl bg-cyan-500/20 text-cyan-300 flex items-center justify-center border border-cyan-400/30">
+                                <i class="fa-solid fa-book-open text-base"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-game text-xl text-yellow-300">How to Play</h3>
+                                <p class="text-[11px] text-slate-400">Reel Big Catch — 2-Player Turn-Based Duel</p>
+                            </div>
+                        </div>
+                        <button id="btn-close-guide" class="text-slate-400 hover:text-white p-2 rounded-xl hover:bg-slate-800 transition-colors">
+                            <i class="fa-solid fa-xmark text-lg"></i>
+                        </button>
+                    </div>
+
+                    <div class="space-y-3 text-xs text-slate-300">
+                        <div class="p-3 rounded-2xl bg-slate-800/70 border border-slate-700/60 flex items-start gap-3">
+                            <span class="text-2xl">🎣</span>
+                            <div>
+                                <strong class="text-cyan-300 text-sm block">1. Turn-Based Duel (5 Fish Each)</strong>
+                                <span>Players take turns: Player 1 fishes 1 fish, then Player 2 fishes 1 fish. Each player catches exactly 5 fish across 5 rounds!</span>
+                            </div>
+                        </div>
+
+                        <div class="p-3 rounded-2xl bg-slate-800/70 border border-slate-700/60 flex items-start gap-3">
+                            <span class="text-2xl">📏</span>
+                            <div>
+                                <strong class="text-yellow-300 text-sm block">2. Telescopic Fish Reveal</strong>
+                                <span>Fish swim with their bodies hidden. When reeled up, they expand accordion-style alongside an animated ruler from <strong>15 cm</strong> up to <strong>90 cm</strong> Legendary Leviathans!</span>
+                            </div>
+                        </div>
+
+                        <div class="p-3 rounded-2xl bg-slate-800/70 border border-slate-700/60 flex items-start gap-3">
+                            <span class="text-2xl">🏆</span>
+                            <div>
+                                <strong class="text-emerald-300 text-sm block">3. Winning the Match</strong>
+                                <span>Whoever reels in the <strong>Biggest Single Fish</strong> wins the trophy! (Tie breaker: highest total cm).</span>
+                            </div>
+                        </div>
+
+                        <div class="p-3 rounded-2xl bg-slate-800/70 border border-slate-700/60 flex items-start gap-3">
+                            <span class="text-2xl">🎮</span>
+                            <div>
+                                <strong class="text-orange-300 text-sm block">4. Controls</strong>
+                                <span><strong>Steer Rod:</strong> <kbd class="key-badge">A</kbd> <kbd class="key-badge">D</kbd> or <kbd class="key-badge">◄</kbd> <kbd class="key-badge">►</kbd> or Drag Mouse/Finger.<br><strong>Cast & Reel:</strong> <kbd class="key-badge">SPACE</kbd>, <kbd class="key-badge">ENTER</kbd>, click water, or tap CAST button.</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button id="btn-guide-got-it" class="w-full py-3 bg-gradient-to-r from-emerald-400 to-cyan-500 hover:from-emerald-500 hover:to-cyan-600 text-slate-950 font-game text-base rounded-2xl shadow-lg btn-bounce uppercase border border-white/30">
+                        Got It, Let's Fish!
+                    </button>
+                </div>
+            </div>
+
             <!-- START & CONFIGURATION MODAL OVERLAY -->
-            <div id="overlay-menu" class="absolute inset-0 bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 z-40 overflow-y-auto">
+            <div id="overlay-menu" class="absolute inset-0 bg-slate-950/90 backdrop-blur-sm flex items-center justify-center p-3 sm:p-6 z-40 overflow-y-auto">
                 <div class="max-w-xl w-full bg-slate-900/95 rounded-3xl p-5 sm:p-7 border-2 border-cyan-500/50 shadow-2xl space-y-4 my-auto">
                     
                     <!-- Header -->
@@ -179,7 +243,7 @@
                             Reel Big Catch
                         </h2>
                         <p class="text-slate-300 text-xs sm:text-sm">
-                            Take turns catching 5 fish each! Expand their hidden telescopic bodies and see who catches the biggest fish!
+                            Take turns catching 5 fish each! Expand their hidden telescopic bodies and see who reels in the biggest catch!
                         </p>
                     </div>
 
@@ -253,13 +317,13 @@
             </div>
 
             <!-- RESULTS & TROPHY CEREMONY MODAL OVERLAY -->
-            <div id="overlay-results" class="absolute inset-0 bg-slate-950/95 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 z-40 overflow-y-auto hidden">
+            <div id="overlay-results" class="absolute inset-0 bg-slate-950/90 backdrop-blur-sm flex items-center justify-center p-3 sm:p-6 z-40 overflow-y-auto hidden">
                 <div class="max-w-lg w-full bg-slate-900 rounded-3xl p-5 sm:p-7 border-2 border-yellow-500/50 shadow-2xl space-y-5 text-center my-auto">
                     
                     <!-- Winner Crown & Trophy -->
                     <div class="space-y-1.5">
                         <div class="inline-block p-3.5 bg-yellow-500/20 rounded-full text-yellow-300 border-2 border-yellow-400/40">
-                            <i class="fa-solid fa-trophy text-4xl animate-bounce"></i>
+                            <i class="fa-solid fa-trophy text-4xl"></i>
                         </div>
                         <h3 class="text-xs font-bold uppercase tracking-widest text-slate-400" data-i18n="matchOver">Match Completed!</h3>
                         <h2 id="winner-title" class="font-game text-2xl sm:text-3xl text-yellow-300 drop-shadow">
@@ -304,11 +368,11 @@
                         <!-- Catches list breakdown -->
                         <div class="grid grid-cols-2 gap-2 border-t border-slate-800/80 pt-2 text-left">
                             <div class="space-y-1">
-                                <p class="text-[9px] text-cyan-300 uppercase font-bold" data-i18n="p1CatchHistory">P1 Catches</p>
+                                <p class="text-[9px] text-cyan-300 uppercase font-bold" data-i18n="p1CatchHistory">Player 1's Catches</p>
                                 <div id="res-p1-fish-list" class="space-y-1"></div>
                             </div>
                             <div class="space-y-1">
-                                <p class="text-[9px] text-orange-300 uppercase font-bold" data-i18n="p2CatchHistory">P2 Catches</p>
+                                <p class="text-[9px] text-orange-300 uppercase font-bold" data-i18n="p2CatchHistory">Player 2's Catches</p>
                                 <div id="res-p2-fish-list" class="space-y-1"></div>
                             </div>
                         </div>
@@ -352,8 +416,8 @@
     </footer>
 
     <!-- AUDIO, CONFETTI & GAME ENGINE SCRIPTS -->
-    <script src="audio.js"></script>
-    <script src="confetti.js"></script>
-    <script src="game.js"></script>
+    <script src="js/audio.js"></script>
+    <script src="js/confetti.js"></script>
+    <script src="js/game.js"></script>
 </body>
 </html>
