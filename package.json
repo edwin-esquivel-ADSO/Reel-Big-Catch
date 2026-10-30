@@ -1,0 +1,13 @@
+{
+  "name": "reel-big-catch-turn-based",
+  "version": "1.0.0",
+  "description": "Reel Big Catch - 2-Player Turn-Based Fishing Competition (5 Fish Catch)",
+  "main": "index.html",
+  "scripts": {
+    "start": "npx serve -s . -l 3000",
+    "dev": "npx serve -s . -l 3000"
+  },
+  "keywords": ["fishing", "game", "2-player", "turn-based", "canvas", "vercel"],
+  "author": "Antigravity Pair Programmer",
+  "license": "MIT"
+}
