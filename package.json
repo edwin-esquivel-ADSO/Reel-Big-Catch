@@ -4,6 +4,7 @@
   "description": "Reel Big Catch - Competitive 2-Player Turn-Based Fishing Game (5 Fish Duel)",
   "main": "index.html",
   "scripts": {
+    "build": "echo 'Static site ready for Vercel'",
     "start": "npx --yes serve -s . -l 3000",
     "dev": "npx --yes serve -s . -l 3000"
   },
